@@ -180,10 +180,10 @@ Exemplos:
 
 - **Docente Responsável:** Hélder Quintela
 - **Grupo de Trabalho:**  
-  - Nome 1 — Nº de Estudante  
-  - Nome 2 — Nº de Estudante  
-  - Nome 3 — Nº de Estudante  
-  - ...  
+  - Ricardo Pinto — 14865  
+  - Daniel Batista — 20472  
+  - Marina Silva — 31029
+  - Nuno Oliveira — 31550
 
 - **Título do Projeto:** Sistema de Gestão Imobiliária — *ImoUni*
 
