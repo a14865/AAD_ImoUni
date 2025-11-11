@@ -4,22 +4,49 @@
 ---
 
 ## 🎯 Objetivo do Projeto
-O projeto **ImoUni** tem como objetivo desenvolver uma **base de dados relacional** em **Microsoft SQL Server** para uma empresa imobiliária.  
-O sistema irá gerir **imóveis, clientes, agentes, contratos, propostas, pagamentos e comissões**, permitindo ainda a geração de relatórios e consultas SQL que apoiem a gestão.
+O projeto **ImoUni** tem como objetivo desenvolver uma **base de dados relacional** em **Microsoft SQL Server** para apoiar a gestão de uma empresa de mediação imobiliária.  
+
+O sistema deve permitir:
+- Gerir **imóveis**, **clientes**, **agentes**, **contratos**, **propostas**, **pagamentos** e **comissões**;  
+- Centralizar e automatizar os processos internos da empresa;  
+- Gerar **consultas SQL** e **relatórios de desempenho** que auxiliem a gestão.
+
+---
+
+## 🗂️ Estrutura Simplificada do Repositório
+
+imouni-db/
+│
+├── README.md ← Descrição completa do projeto.
+│
+├── sql/ ← Scripts SQL do projeto.
+│ ├── 01_modelo.sql ← Criação das tabelas e relações (DDL).
+│ ├── 02_dados.sql ← Inserção de dados simulados (DML).
+│ ├── 03_consultas.sql ← Consultas e relatórios de gestão.
+│ └── 04_testes.sql ← Testes e validação da base de dados.
+│
+├── doc/ ← Documentação e relatórios.
+│ ├── der.png ← Diagrama Entidade-Relacionamento.
+│ ├── modelo_relacional.png← Modelo lógico (relacional).
+│ └── relatorio_final.pdf ← Relatório final (3–5 páginas).
+│
+└── data/ ← (Opcional) Dados de exemplo em CSV.
 
 ---
 
 ## ⚙️ Etapa 0 — Preparação do Repositório
-Esta é a **fase inicial** do projeto. Aqui defines a estrutura de pastas, adicionas este ficheiro (`README.md`) e preparas o ambiente de desenvolvimento.
 
-### O que fazer agora
-1. Criar o repositório no GitHub (exemplo: `imouni-db`);  
-2. Adicionar este `README.md`;  
-3. Criar as pastas essenciais descritas abaixo;  
-4. Confirmar que o SQL Server está instalado (ou usar Docker);  
-5. Testar a ligação ao servidor e criar a base de dados vazia.
+**Objetivo:** Criar o repositório e preparar o ambiente de trabalho.
 
----
+### Tarefas
+- Criar o repositório no GitHub (`imouni-db`);
+- Adicionar este `README.md`;
+- Criar as pastas: `sql/`, `doc/`, `data/`;
+- Instalar e configurar o **Microsoft SQL Server** (ou usar Docker);
+- Testar a ligação ao servidor e criar uma base de dados vazia.
 
-## 📁 Estrutura do Repositório
-
+### Exemplo com Docker
+```bash
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Strong!Pass123' \
+  -p 1433:1433 -d --name imouni-sql \
+  mcr.microsoft.com/mssql/server:2019-latest
