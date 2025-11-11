@@ -164,3 +164,28 @@ Exemplos:
 | Implementação SQL                        | 30%   |
 | Consultas SQL (relevância e correção)    | 20%   |
 | Clareza e estrutura do relatório         | 20%   |
+
+---
+
+## 📎 Identificação da Unidade Curricular e Projeto
+
+- **Unidade Curricular:** Análise e Acesso a Dados  
+- **Ano Letivo:** 2025/2026 — 1.º Semestre  
+- **Curso:** Licenciatura em Engenharia Informática  
+- **Instituição:** IPCA - Instituto Politécnico do Cávado e do Ave
+
+---
+
+## 👥 Identificação dos Intervenientes
+
+- **Docente Responsável:** Hélder Quintela
+- **Grupo de Trabalho:**  
+  - Nome 1 — Nº de Estudante  
+  - Nome 2 — Nº de Estudante  
+  - Nome 3 — Nº de Estudante  
+  - ...  
+
+- **Título do Projeto:** Sistema de Gestão Imobiliária — *ImoUni*
+
+---
+
