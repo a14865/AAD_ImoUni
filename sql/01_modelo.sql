@@ -12,7 +12,7 @@ CREATE TABLE Concelho(
 
 CREATE TABLE CodigoPostal(
 	id_codigopostal INT IDENTITY(1,1) PRIMARY KEY,
-	codigopostal VARCHAR(8) NOT NULL,
+	codigopostal VARCHAR(8) NOT NULL UNIQUE,
 	id_concelho INT NOT NULL,
 	FOREIGN KEY (id_concelho) REFERENCES Concelho(id_concelho)
 );
@@ -36,8 +36,8 @@ CREATE TABLE Agente(
 	id_agente INT IDENTITY(1,1) PRIMARY KEY,
 	nomeagente VARCHAR(255) NOT NULL,
 	telefone VARCHAR(16) NOT NULL,
-	nifagente VARCHAR(9),
-	percentagemcomissao FLOAT NOT NULL
+	nifagente VARCHAR(9) NOT NULL UNIQUE,
+	percentagemcomissao DECIMAL(5,4) NOT NULL CHECK (percentagemcomissao BETWEEN 0 and 1)
 );
 
 CREATE TABLE Cliente(
@@ -45,7 +45,7 @@ CREATE TABLE Cliente(
 	nomecliente VARCHAR(255) NOT NULL,
 	moradacliente VARCHAR(255) NOT NULL,
 	id_codigopostal INT NOT NULL,
-	nifcliente VARCHAR(9) NOT NULL,
+	nifcliente VARCHAR(9) NOT NULL UNIQUE,
 	telefone VARCHAR(16) NOT NULL,
 	email VARCHAR(50),
 	FOREIGN KEY (id_codigopostal) REFERENCES CodigoPostal(id_codigopostal)
@@ -56,20 +56,20 @@ CREATE TABLE CatalogoImovel(
 	id_tipoimovel INT NOT NULL,
 	morada VARCHAR(255) NOT NULL,
 	id_codigopostal INT NOT NULL,
-	nquartos INT NOT NULL,
-	area INT NOT NULL,
-	nwc INT NOT NULL,
+	nquartos INT NOT NULL CHECK (nquartos >= 0),
+	area INT NOT NULL CHECK (area > 0),
+	nwc INT NOT NULL CHECK (nwc >= 0),
 	garagem BIT NOT NULL,
 	piscina BIT NOT NULL,
 	id_estado INT NOT NULL,
 	id_modalidade INT NOT NULL,
-	matriz VARCHAR(20) NOT NULL,
-	valor DECIMAL(10,2) NOT NULL,-- Maximo 7 digitos, Minimo 2 digitos
+	matriz VARCHAR(20) NOT NULL UNIQUE,
+	valor DECIMAL(10,2) NOT NULL,
 	datacarteira DATE NOT NULL,
 	id_agente INT NOT NULL,
 	id_proprietario INT NOT NULL,
-	latitude DECIMAL(9,6) NOT NULL,
-	longitude DECIMAL(9,6) NOT NULL,
+	latitude DECIMAL(9,6) NOT NULL CHECK (latitude BETWEEN -90 and 90),
+	longitude DECIMAL(9,6) NOT NULL CHECK (longitude BETWEEN -180 and 180),
 	Ativo BIT NOT NULL,
 	FOREIGN KEY (id_tipoimovel) REFERENCES TipoImovel(id_tipoimovel),
 	FOREIGN KEY (id_codigopostal) REFERENCES CodigoPostal(id_codigopostal),
@@ -101,8 +101,9 @@ CREATE TABLE Transacao(
 	id_passivo INT NOT NULL,
 	id_agente INT NOT NULL,
 	id_tipotransacao INT NOT NULL,
-	duracao INT,
 	valor DECIMAL (10,2) NOT NULL,
+	data_inicio DATE,
+	data_fim DATE,
 	datatransacao DATE NOT NULL,
 	datacontrato DATE NOT NULL,
 	FOREIGN KEY (id_imovel) REFERENCES CatalogoImovel(id_imovel),
@@ -115,7 +116,7 @@ CREATE TABLE Transacao(
 CREATE TABLE PagamentoComissao(
 	id_pagamentocomissao INT IDENTITY(1,1) PRIMARY KEY,
 	datapagamentocomissao DATE NOT NULL,
-	valor DECIMAL(7,3) NOT NULL,
+	valor DECIMAL(10,2) NOT NULL,
 	id_metodopagamento INT NOT NULL,
 	id_transacao INT NOT NULL,
 	FOREIGN KEY (id_metodopagamento) REFERENCES MetodoPagamento(id_metodopagamento),
@@ -134,8 +135,8 @@ CREATE TABLE Documentos(
 
 CREATE TABLE Preferencias(
 	id_preferencia INT IDENTITY(1,1) PRIMARY KEY,
-	id_cliente INT,
-	id_agente INT,
+	id_cliente INT NOT NULL,
+	id_agente INT NOT NULL,
 	nquartos INT NOT NULL,
 	nwc INT NOT NULL,
 	area INT,
