@@ -274,3 +274,49 @@ INSERT INTO Preferencias (id_cliente, id_agente, id_modalidade, valor_minimo, va
 (8, 8, 1, 200000, 350000, 11),
 (9, 9, 2, 600, 1000, 10),
 (10, 10, 1, 150000, 250000, 13);
+
+-- =============================================================
+-- 6. DADOS EM FALTA: PAGAMENTOS E DOCUMENTOS
+-- =============================================================
+
+-- 6.1 Pagamento de Comissões (Assumindo que foram pagos 5 dias após a transação)
+-- Nota: Estou a ligar aos IDs de transação 1 a 17 que criaste no passo anterior.
+INSERT INTO PagamentoComissao (datapagamentocomissao, valor, id_metodopagamento, id_transacao) VALUES
+('2023-06-20', 12250.00, 1, 1),   -- 5% de 245k (Transação 1)
+('2023-06-21', 17600.00, 1, 2),   -- 4% de 440k (Transação 2)
+('2023-06-08', 45.00, 3, 3),      -- 5% de 900 (Transação 3 - Arrendamento)
+('2023-06-25', 7200.00, 1, 4),    -- 4% de 180k (Transação 4)
+('2023-06-26', 13500.00, 2, 5),   -- 5% de 270k (Transação 5)
+('2023-06-27', 15000.00, 1, 6),   -- 5% de 300k (Transação 6)
+('2023-06-28', 24000.00, 1, 7),   -- 6% de 400k (Transação 7)
+('2023-06-29', 16000.00, 1, 8),   -- 5% de 320k (Transação 8)
+('2023-06-16', 36.00, 3, 9),      -- 4% de 900 (Transação 9 - Arrendamento)
+('2023-07-02', 12500.00, 1, 10),  -- 5% de 250k (Transação 10)
+('2023-07-03', 27000.00, 2, 11),  -- 6% de 450k (Transação 11)
+('2023-06-20', 38.00, 3, 12),     -- 4% de 950 (Transação 12 - Arrendamento)
+('2023-07-05', 15000.00, 1, 13),  -- 5% de 300k (Transação 13)
+('2023-07-06', 33000.00, 1, 14),  -- 6% de 550k (Transação 14)
+('2023-07-07', 48000.00, 1, 15),  -- 4% de 1.2M (Transação 15)
+('2023-07-08', 8400.00, 1, 16),   -- 4% de 210k (Transação 16)
+('2023-06-25', 30.00, 3, 17);     -- 5% de 600 (Transação 17 - Arrendamento)
+
+-- 6.2 Documentos Associados (Escrituras e Contratos)
+-- ID Tipo Documento: 4 = Escritura (verifiquei no teu insert anterior)
+INSERT INTO Documentos (id_transacao, id_documento, datarececao, validade) VALUES
+(1, 4, '2023-06-15', '2033-06-15'), -- Escritura Venda
+(2, 4, '2023-06-16', '2033-06-16'),
+(3, 3, '2023-06-03', '2024-06-03'), -- Contrato Arrendamento
+(4, 4, '2023-06-20', '2033-06-20'),
+(5, 4, '2023-06-21', '2033-06-21'),
+(6, 4, '2023-06-22', '2033-06-22'),
+(7, 4, '2023-06-23', '2033-06-23'),
+(8, 4, '2023-06-24', '2033-06-24'),
+(9, 3, '2023-06-11', '2024-06-11'),
+(10, 4, '2023-06-27', '2033-06-27'),
+(11, 4, '2023-06-28', '2033-06-28'),
+(12, 3, '2023-06-15', '2024-06-15'),
+(13, 4, '2023-06-30', '2033-06-30'),
+(14, 4, '2023-07-01', '2033-07-01'),
+(15, 4, '2023-07-02', '2033-07-02'),
+(16, 4, '2023-07-03', '2033-07-03'),
+(17, 3, '2023-06-20', '2024-06-20');
