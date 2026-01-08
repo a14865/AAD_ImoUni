@@ -1,3 +1,7 @@
+CREATE DATABASE IMOUNI
+
+use IMOUNI
+
 CREATE TABLE Distrito(
 	id_distrito INT IDENTITY(1,1) PRIMARY KEY,
 	distrito VARCHAR(30)
@@ -98,14 +102,16 @@ CREATE TABLE Transacao(
 	id_transacao INT IDENTITY(1,1) PRIMARY KEY,
 	id_imovel INT NOT NULL,
 	id_ativo INT NOT NULL,
-	id_passivo INT NOT NULL CHECK (id_ativo <> id_passivo),
+	id_passivo INT NOT NULL,
 	id_agente INT NOT NULL,
 	id_tipotransacao INT NOT NULL,
 	valor DECIMAL (10,2) NOT NULL,
-	data_inicio DATE,
-	data_fim DATE CHECK (data_fim > data_inicio),
+	data_inicio DATE NOT NULL,
+	data_fim DATE,
 	datatransacao DATE NOT NULL,
 	datacontrato DATE NOT NULL,
+	CHECK (id_passivo <> id_ativo),
+	CHECK (data_fim IS NULL OR data_fim > data_inicio),
 	FOREIGN KEY (id_imovel) REFERENCES CatalogoImovel(id_imovel),
 	FOREIGN KEY (id_ativo) REFERENCES Cliente(id_cliente),
 	FOREIGN KEY (id_passivo) REFERENCES Cliente(id_cliente),
@@ -144,8 +150,9 @@ CREATE TABLE Preferencias(
 	piscina BIT,
 	id_modalidade INT,
 	valor_minimo DECIMAL (10,2) CHECK(valor_minimo >= 0),
-	valor_maximo DECIMAL (10,2) CHECK (valor_maximo > valor_minimo),
+	valor_maximo DECIMAL (10,2),
 	id_concelho INT,
+	CHECK (valor_maximo > valor_minimo),
 	FOREIGN KEY (id_modalidade) REFERENCES Modalidade(id_modalidade),
 	FOREIGN KEY (id_concelho) REFERENCES Concelho(id_concelho),
 	FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),

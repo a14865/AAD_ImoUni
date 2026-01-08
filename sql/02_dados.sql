@@ -1,208 +1,276 @@
+use IMOUNI
+
 -- =============================================================
--- 1. DADOS DE CONFIGURAÇÃO (LOOKUPS)
+-- 1. TABELAS AUXILIARES E GEOGRAFIA (DADOS BASE)
 -- =============================================================
 
--- Distritos
+-- 1.1 Distritos (Todos de Portugal)
 INSERT INTO Distrito (distrito) VALUES 
-('Braga'), 
-('Porto'), 
-('Lisboa'), 
-('Viana do Castelo'),
-('Faro');
+('Aveiro'), ('Beja'), ('Braga'), ('Bragança'), ('Castelo Branco'), 
+('Coimbra'), ('Évora'), ('Faro'), ('Guarda'), ('Leiria'), 
+('Lisboa'), ('Portalegre'), ('Porto'), ('Santarém'), ('Setúbal'), 
+('Viana do Castelo'), ('Vila Real'), ('Viseu'), ('Ilha da Madeira'), ('Ilha dos Açores');
 
--- Concelhos
+-- 1.2 Concelhos (Exemplos manuais assumindo os IDs dos distritos acima)
+-- Assumindo: Lisboa=11, Porto=13, Faro=8, Braga=3, Coimbra=6
 INSERT INTO Concelho (concelho, id_distrito) VALUES 
-('Barcelos', 1),       -- ID 1
-('Braga', 1),          -- ID 2
-('Guimarães', 1),      -- ID 3
-('Esposende', 1),      -- ID 4
-('Vila Nova de Gaia', 2), -- ID 5
-('Porto', 2),          -- ID 6
-('Matosinhos', 2),     -- ID 7
-('Lisboa', 3),         -- ID 8
-('Cascais', 3);        -- ID 9
+('Lisboa', 11), ('Sintra', 11), ('Cascais', 11), ('Oeiras', 11), ('Amadora', 11),
+('Porto', 13), ('Vila Nova de Gaia', 13), ('Matosinhos', 13), ('Maia', 13),
+('Faro', 8), ('Loulé', 8), ('Portimão', 8),
+('Braga', 3), ('Guimarães', 3),
+('Coimbra', 6), ('Figueira da Foz', 6);
 
--- Códigos Postais
+-- 1.3 Códigos Postais (Alguns exemplos para usar nos clientes/imóveis)
 INSERT INTO CodigoPostal (codigopostal, id_concelho) VALUES 
-('4750-100', 1), -- Barcelos Centro
-('4750-200', 1), -- Barcelos Periferia
-('4710-001', 2), -- Braga Sé
-('4715-000', 2), -- Braga Lamaçães
-('4800-010', 3), -- Guimarães Centro
-('4810-000', 3), -- Guimarães Azurém
-('4400-001', 5), -- Gaia
-('4100-001', 6), -- Porto Boavista
-('4740-001', 4); -- Esposende
+('1000-001', 1), ('1100-050', 1), ('2710-100', 2), ('2750-200', 3), ('2780-100', 4), -- Lisboa/Sintra/Cascais/Oeiras
+('4000-100', 6), ('4100-200', 6), ('4400-100', 7), ('4450-100', 8), -- Porto/Gaia/Matosinhos
+('8000-100', 10), ('8100-200', 11), -- Faro/Loulé
+('4700-100', 13), ('3000-100', 15); -- Braga/Coimbra
 
--- Estados do Imóvel
-INSERT INTO Estado (descricaoestado) VALUES 
-('Disponível'),   -- ID 1
-('Reservado'),    -- ID 2
-('Vendido'),      -- ID 3
-('Arrendado'),    -- ID 4
-('Retirado');     -- ID 5
-
--- Tipos de Imóvel
-INSERT INTO TipoImovel (descricaotipo) VALUES 
-('Apartamento'), 
-('Moradia'), 
-('Terreno'), 
-('Loja'),
-('Armazém');
-
--- Modalidades
-INSERT INTO Modalidade (descricaomodalidade) VALUES 
-('Venda'), 
-('Arrendamento');
-
--- Tipos de Transação
-INSERT INTO TipoTransacao (tipotransacao) VALUES 
-('Compra e Venda'), 
-('Contrato Arrendamento');
-
--- Tipos de Documento
-INSERT INTO TipoDocumento (tipodocumento) VALUES 
-('Escritura Pública'), 
-('Contrato Promessa (CPCV)'), 
-('Contrato Arrendamento'), 
-('Certidão Predial'),
-('Recibo de Comissão');
-
--- Métodos de Pagamento
-INSERT INTO MetodoPagamento (metodopagamento) VALUES 
-('Transferência Bancária'), 
-('Cheque Visado'), 
-('Numerário');
-
--- Estados da Proposta
-INSERT INTO EstadoProposta (descricaoestado) VALUES ('Pendente'), ('Aceite'), ('Recusada'), ('Contra-proposta');
+-- 1.4 Tipologias e Estados
+INSERT INTO Estado (descricaoestado) VALUES ('Novo'), ('Usado'), ('Para Recuperar'), ('Em Construção');
+INSERT INTO TipoImovel (descricaotipo) VALUES ('Apartamento T1'), ('Apartamento T2'), ('Apartamento T3'), ('Moradia V3'), ('Moradia V4'), ('Terreno'), ('Loja');
+INSERT INTO Modalidade (descricaomodalidade) VALUES ('Venda'), ('Arrendamento');
+INSERT INTO TipoDocumento (tipodocumento) VALUES ('Cartão Cidadão'), ('Passaporte'), ('NIF'), ('Escritura');
+INSERT INTO TipoTransacao (tipotransacao) VALUES ('Compra'), ('Arrendamento');
+INSERT INTO MetodoPagamento (metodopagamento) VALUES ('Transferência'), ('Cheque Bancário'), ('Numerário');
+INSERT INTO EstadoProposta (descricaoestado) VALUES ('Pendente'), ('Aceite'), ('Recusada');
 
 
 -- =============================================================
 -- 2. PESSOAS (AGENTES E CLIENTES)
 -- =============================================================
 
--- Agentes (Equipa Comercial)
-INSERT INTO Agente (nomeagente, telefone, nifagente, percentagemcomissao) VALUES 
-('Rui Mendes', '910000111', '210000111', 0.05), -- O "Craque" (5%)
-('Sofia Matos', '920000222', '210000222', 0.05), -- A Especialista em Luxo (5%)
-('Pedro Nogueira', '930000333', '210000333', 0.04), -- O Júnior (4%)
-('Ana Lima', '960000444', '210000444', 0.06); -- A Chefe de Equipa (6%)
+-- 2.1 Agentes (15 Inserções Manuais)
+INSERT INTO Agente (nomeagente, telefone, nifagente, percentagemcomissao) VALUES
+('Rui Veloso', '912345678', '200100100', 0.05),
+('Ana Moura', '912345679', '200100101', 0.04),
+('Pedro Abrunhosa', '912345680', '200100102', 0.05),
+('Mariza Reis', '912345681', '200100103', 0.06),
+('Tony Carreira', '912345682', '200100104', 0.03),
+('Amália Rodrigues', '912345683', '200100105', 0.05),
+('Carlos Paredes', '912345684', '200100106', 0.04),
+('Zeca Afonso', '912345685', '200100107', 0.05),
+('Luísa Sobral', '912345686', '200100108', 0.05),
+('Salvador Sobral', '912345687', '200100109', 0.04),
+('António Variações', '912345688', '200100110', 0.05),
+('Dulce Pontes', '912345689', '200100111', 0.06),
+('Sérgio Godinho', '912345690', '200100112', 0.04),
+('Jorge Palma', '912345691', '200100113', 0.05),
+('Xutos Pontapés', '912345692', '200100114', 0.03);
 
--- Clientes (Mistura de Proprietários e Compradores)
-INSERT INTO Cliente (nomecliente, moradacliente, id_codigopostal, nifcliente, telefone, email) VALUES 
--- Proprietários (Vendedores)
-('António Silva', 'Rua Direita, 5', 1, '220000001', '911111111', 'antonio@gmail.com'),
-('Maria Fernandes', 'Av. Liberdade, 20', 3, '220000002', '922222222', 'maria@hotmail.com'),
-('João Santos', 'Rua do Souto, 50', 2, '220000003', '933333333', 'joao.santos@sapo.pt'),
-('Empresa ImobNorte Lda', 'Zona Industrial, 10', 4, '500000001', '253000000', 'geral@imobnorte.pt'),
--- Compradores / Arrendatários
-('Carlos Sousa', 'Travessa do Sol, 2', 5, '230000001', '915555555', 'carlos.sousa@gmail.com'),
-('Beatriz Costa', 'Rua das Flores, 8', 6, '230000002', '966666666', 'bia.costa@outlook.com'),
-('Investimentos Globais SA', 'Lisboa Parque, 1', 8, '505050505', '210000000', 'admin@investglobal.com'),
-('Tiago Oliveira', 'Rua 25 de Abril, 9', 1, '230000003', '917777777', 'tiago@email.com');
+-- 2.2 Clientes (40 Inserções Manuais - "Muitas linhas")
+-- Nota: CP ID 1 a 13
+INSERT INTO Cliente (nomecliente, moradacliente, id_codigopostal, nifcliente, telefone, email) VALUES
+('Joana Vasconcelos', 'Rua das Artes 1', 1, '250100100', '930000001', 'joana@art.pt'),
+('Saramago Silva', 'Av da Literatura 2', 2, '250100101', '930000002', 'saramago@book.pt'),
+('Fernando Pessoa', 'Rua dos Heterónimos 3', 1, '250100102', '930000003', 'pessoa@lisboa.pt'),
+('Sophia Mello', 'Praca do Mar 4', 3, '250100103', '930000004', 'sophia@mar.pt'),
+('Eça de Queirós', 'Rua dos Maias 5', 4, '250100104', '930000005', 'eca@maias.pt'),
+('Camilo Branco', 'Largo do Amor 6', 5, '250100105', '930000006', 'camilo@amor.pt'),
+('Florbela Espanca', 'Rua da Saudade 7', 6, '250100106', '930000007', 'bela@poesia.pt'),
+('Almeida Garrett', 'Av das Viagens 8', 7, '250100107', '930000008', 'garrett@viagens.pt'),
+('Gil Vicente', 'Beco do Teatro 9', 8, '250100108', '930000009', 'gil@teatro.pt'),
+('Luís Camões', 'Rua dos Lusíadas 10', 1, '250100109', '930000010', 'camoes@lusiadas.pt'),
+('Vasco da Gama', 'Av da India 11', 2, '250100110', '930000011', 'vasco@nav.pt'),
+('Infante D. Henrique', 'Rua de Sagres 12', 10, '250100111', '930000012', 'infante@sagres.pt'),
+('Pedro Álvares Cabral', 'Travessa do Brasil 13', 11, '250100112', '930000013', 'pedro@brasil.pt'),
+('Fernão Magalhães', 'Rotunda do Mundo 14', 12, '250100113', '930000014', 'fernao@mundo.pt'),
+('Bartolomeu Dias', 'Rua do Cabo 15', 13, '250100114', '930000015', 'barto@cabo.pt'),
+('Cristiano Ronaldo', 'Av do Golo 7', 9, '250100115', '930000016', 'cr7@bola.pt'),
+('Eusébio Silva', 'Rua da Pantera 10', 1, '250100116', '930000017', 'eusebio@slb.pt'),
+('Figo Madeira', 'Praca Real 11', 2, '250100117', '930000018', 'figo@inter.pt'),
+('Mourinho Special', 'Setubal Bay 1', 5, '250100118', '930000019', 'jose@special.pt'),
+('Rosa Mota', 'Rua da Maratona 42', 6, '250100119', '930000020', 'rosa@run.pt'),
+('Carlos Lopes', 'Av do Ouro 84', 7, '250100120', '930000021', 'carlos@run.pt'),
+('Fernanda Ribeiro', 'Rua dos 10k 96', 8, '250100121', '930000022', 'nanda@run.pt'),
+('Nélson Évora', 'Travessa do Salto 1', 9, '250100122', '930000023', 'nelson@jump.pt'),
+('Telma Monteiro', 'Beco do Judo 2', 1, '250100123', '930000024', 'telma@judo.pt'),
+('Pichardo Pedro', 'Rua Tripla 3', 2, '250100124', '930000025', 'pedro@jump.pt'),
+('Mamona Patrícia', 'Av da Prata 4', 3, '250100125', '930000026', 'patricia@jump.pt'),
+('Fernando Pimenta', 'Lagoa da Canoa 5', 4, '250100126', '930000027', 'pimenta@canoa.pt'),
+('Teresa Bonvalot', 'Rua das Ondas 6', 11, '250100127', '930000028', 'teresa@surf.pt'),
+('Frederico Morais', 'Av do Surf 7', 11, '250100128', '930000029', 'kikas@surf.pt'),
+('Miguel Oliveira', 'Pista de Portimão 88', 12, '250100129', '930000030', 'miguel@moto.pt'),
+('Félix João', 'Rua do Atlético 1', 13, '250100130', '930000031', 'felix@bola.pt'),
+('Bruno Fernandes', 'Av de Manchester 2', 6, '250100131', '930000032', 'bruno@mu.pt'),
+('Bernardo Silva', 'Rua do City 3', 1, '250100132', '930000033', 'bernardo@city.pt'),
+('Rúben Dias', 'Travessa da Defesa 4', 2, '250100133', '930000034', 'ruben@city.pt'),
+('Diogo Jota', 'Beco do Liverpool 5', 7, '250100134', '930000035', 'diogo@lfc.pt'),
+('Pepe Kepler', 'Rua do Dragão 3', 6, '250100135', '930000036', 'pepe@fc.pt'),
+('Otávio Monteiro', 'Av da Raça 25', 7, '250100136', '930000037', 'otavio@fc.pt'),
+('Taremi Mehdi', 'Rua do Golo 9', 8, '250100137', '930000038', 'taremi@fc.pt'),
+('Rafa Silva', 'Largo da Luz 27', 1, '250100138', '930000039', 'rafa@slb.pt'),
+('João Mário', 'Av do Meio Campo 20', 1, '250100139', '930000040', 'jmario@slb.pt');
 
--- =============================================================
--- 3. CATÁLOGO DE IMÓVEIS (O Produto)
--- =============================================================
-
-INSERT INTO CatalogoImovel 
-(id_tipoimovel, morada, id_codigopostal, nquartos, area, nwc, garagem, piscina, id_estado, id_modalidade, matriz, valor, datacarteira, id_agente, id_proprietario, latitude, longitude, Ativo) 
-VALUES 
--- 1. Apartamento T3 Barcelos (Vendido)
-(1, 'Rua D. António Barroso, 40', 1, 3, 120, 2, 1, 0, 3, 1, 'U-1001', 185000.00, '2024-11-01', 1, 1, 41.53, -8.62, 0),
-
--- 2. Moradia Luxo Braga (Disponível) - A "Jóia da Coroa"
-(2, 'Bom Jesus do Monte, Lote 5', 4, 5, 450, 4, 1, 1, 1, 1, 'U-2005', 850000.00, '2025-01-05', 2, 2, 41.55, -8.38, 1),
-
--- 3. Loja Centro Guimarães (Arrendada)
-(4, 'Largo da Oliveira, 10', 5, 0, 60, 1, 0, 0, 4, 2, 'C-3099', 850.00, '2024-12-10', 3, 3, 41.44, -8.29, 1),
-
--- 4. Terreno Industrial Gaia (Disponível)
-(3, 'Zona Industrial Canelas', 7, 0, 2000, 0, 0, 0, 1, 1, 'R-5000', 250000.00, '2025-01-20', 4, 4, 41.10, -8.60, 1),
-
--- 5. Apartamento T2 Porto Boavista (Vendido)
-(1, 'Av. da Boavista, 1500', 8, 2, 95, 2, 1, 0, 3, 1, 'U-6000', 320000.00, '2024-10-15', 2, 4, 41.16, -8.64, 0),
-
--- 6. Moradia T3 Barcelos Periferia (Disponível)
-(2, 'Arcozelo, Rua do Rio', 2, 3, 180, 2, 1, 0, 1, 1, 'U-1050', 230000.00, '2025-02-01', 1, 1, 41.54, -8.63, 1),
-
--- 7. Apartamento T1 Braga Univ (Arrendado)
-(1, 'Gualtar, perto da UM', 4, 1, 50, 1, 0, 0, 4, 2, 'U-2100', 650.00, '2025-01-10', 3, 3, 41.56, -8.39, 1),
-
--- 8. Ruína / Terreno Esposende (Reservado)
-(3, 'Apúlia, Frente Mar', 9, 0, 500, 0, 0, 0, 2, 1, 'R-9000', 150000.00, '2025-02-10', 4, 2, 41.48, -8.77, 1);
-
--- =============================================================
--- 4. PROPOSTAS (A Negociação)
--- =============================================================
-
-INSERT INTO Proposta (valorproposta, dataproposta, observacoes, id_cliente, id_imovel, id_agente, id_estadoproposta) VALUES 
--- 1. Proposta baixa pelo T3 Barcelos (Recusada)
-(160000.00, '2024-11-10', 'Cliente acha que precisa de obras', 5, 1, 1, 3),
-
--- 2. Proposta boa pelo T3 Barcelos (Aceite) -> Gerou Venda
-(180000.00, '2024-11-15', 'Aceite com recheio incluído', 5, 1, 1, 2),
-
--- 3. Proposta pela Moradia de Luxo (Pendente)
-(800000.00, '2025-02-12', 'Sujeito a aprovação bancária', 7, 2, 2, 1),
-
--- 4. Proposta pela Loja Guimarães (Aceite) -> Gerou Arrendamento
-(800.00, '2024-12-15', 'Contrato de 5 anos', 8, 3, 3, 2),
-
--- 5. Proposta T1 Braga (Recusada)
-(500.00, '2025-01-12', 'Estudante', 6, 7, 3, 3),
-
--- 6. Contra-proposta T1 Braga (Aceite) -> Gerou Arrendamento
-(600.00, '2025-01-14', 'Fiadores incluídos', 6, 7, 3, 2),
-
--- 7. Proposta T2 Porto (Aceite) -> Gerou Venda
-(315000.00, '2024-10-20', 'Pronto pagamento', 7, 5, 2, 2);
 
 -- =============================================================
--- 5. TRANSAÇÕES (CONTRATOS FECHADOS)
+-- 3. CATÁLOGO DE IMÓVEIS (100 LINHAS MANUAIS)
+-- =============================================================
+-- Estrutura: Tipo, Morada, CP, Quartos, Area, WC, Garagem, Piscina, Estado, Mod, Matriz, Valor, Data, Agente, Prop, Lat, Long, Ativo
+
+INSERT INTO CatalogoImovel (id_tipoimovel, morada, id_codigopostal, nquartos, area, nwc, garagem, piscina, id_estado, id_modalidade, matriz, valor, datacarteira, id_agente, id_proprietario, latitude, longitude, Ativo) VALUES
+(2, 'Rua A 1', 1, 2, 80, 1, 1, 0, 2, 1, 'MAT-001', 250000, '2023-01-01', 1, 1, 38.700, -9.100, 1),
+(3, 'Rua A 2', 1, 3, 120, 2, 1, 0, 1, 1, 'MAT-002', 450000, '2023-01-02', 2, 2, 38.701, -9.101, 1),
+(1, 'Rua A 3', 2, 1, 50, 1, 0, 0, 2, 2, 'MAT-003', 900, '2023-01-03', 3, 3, 38.702, -9.102, 1),
+(4, 'Rua A 4', 3, 3, 200, 3, 1, 1, 1, 1, 'MAT-004', 650000, '2023-01-04', 4, 4, 38.703, -9.103, 1),
+(5, 'Rua A 5', 4, 4, 300, 4, 1, 1, 2, 1, 'MAT-005', 850000, '2023-01-05', 5, 5, 38.704, -9.104, 1),
+(6, 'Rua A 6', 5, 0, 1000, 0, 0, 0, 2, 1, 'MAT-006', 150000, '2023-01-06', 6, 6, 38.705, -9.105, 1),
+(2, 'Rua A 7', 6, 2, 90, 1, 1, 0, 2, 1, 'MAT-007', 180000, '2023-01-07', 7, 7, 41.150, -8.600, 1),
+(3, 'Rua A 8', 7, 3, 130, 2, 1, 0, 2, 1, 'MAT-008', 280000, '2023-01-08', 8, 8, 41.151, -8.601, 1),
+(2, 'Rua A 9', 8, 2, 85, 1, 0, 0, 3, 1, 'MAT-009', 120000, '2023-01-09', 9, 9, 41.152, -8.602, 1),
+(1, 'Rua A 10', 9, 1, 60, 1, 1, 0, 1, 2, 'MAT-010', 700, '2023-01-10', 10, 10, 41.153, -8.603, 1),
+(2, 'Rua B 1', 10, 2, 95, 2, 1, 1, 1, 1, 'MAT-011', 300000, '2023-01-11', 11, 11, 37.010, -7.900, 1),
+(3, 'Rua B 2', 11, 3, 140, 2, 1, 1, 2, 1, 'MAT-012', 400000, '2023-01-12', 12, 12, 37.011, -7.901, 1),
+(4, 'Rua B 3', 12, 4, 250, 3, 1, 1, 1, 1, 'MAT-013', 900000, '2023-01-13', 13, 13, 41.550, -8.400, 1),
+(2, 'Rua B 4', 13, 2, 88, 1, 0, 0, 2, 2, 'MAT-014', 600, '2023-01-14', 14, 14, 40.200, -8.400, 1),
+(7, 'Rua B 5', 1, 0, 100, 1, 0, 0, 2, 2, 'MAT-015', 1200, '2023-01-15', 15, 15, 38.710, -9.110, 1),
+(2, 'Rua B 6', 2, 2, 92, 1, 1, 0, 4, 1, 'MAT-016', 320000, '2023-01-16', 1, 16, 38.711, -9.111, 1),
+(3, 'Rua B 7', 3, 3, 150, 2, 1, 1, 1, 1, 'MAT-017', 550000, '2023-01-17', 2, 17, 38.712, -9.112, 1),
+(1, 'Rua B 8', 4, 1, 55, 1, 0, 0, 2, 2, 'MAT-018', 850, '2023-01-18', 3, 18, 38.713, -9.113, 1),
+(5, 'Rua B 9', 5, 5, 400, 5, 1, 1, 1, 1, 'MAT-019', 1200000, '2023-01-19', 4, 19, 38.714, -9.114, 1),
+(2, 'Rua B 10', 6, 2, 100, 1, 1, 0, 2, 1, 'MAT-020', 210000, '2023-01-20', 5, 20, 41.160, -8.610, 1),
+(3, 'Rua C 1', 7, 3, 125, 2, 1, 0, 2, 1, 'MAT-021', 290000, '2023-01-21', 6, 21, 41.161, -8.611, 1),
+(4, 'Rua C 2', 8, 4, 210, 3, 1, 1, 1, 1, 'MAT-022', 480000, '2023-01-22', 7, 22, 41.162, -8.612, 1),
+(2, 'Rua C 3', 9, 2, 80, 1, 0, 0, 3, 1, 'MAT-023', 110000, '2023-01-23', 8, 23, 41.163, -8.613, 1),
+(1, 'Rua C 4', 10, 1, 65, 1, 1, 1, 1, 2, 'MAT-024', 950, '2023-01-24', 9, 24, 37.020, -7.910, 1),
+(2, 'Rua C 5', 11, 2, 105, 2, 1, 1, 1, 1, 'MAT-025', 350000, '2023-01-25', 10, 25, 37.021, -7.911, 1),
+(3, 'Rua C 6', 12, 3, 160, 3, 1, 1, 2, 1, 'MAT-026', 260000, '2023-01-26', 11, 26, 41.560, -8.410, 1),
+(6, 'Rua C 7', 13, 0, 2000, 0, 0, 0, 2, 1, 'MAT-027', 90000, '2023-01-27', 12, 27, 40.210, -8.410, 1),
+(2, 'Rua C 8', 1, 2, 82, 1, 1, 0, 2, 1, 'MAT-028', 260000, '2023-01-28', 13, 28, 38.720, -9.120, 1),
+(3, 'Rua C 9', 2, 3, 122, 2, 1, 0, 1, 1, 'MAT-029', 460000, '2023-01-29', 14, 29, 38.721, -9.121, 1),
+(1, 'Rua C 10', 3, 1, 52, 1, 0, 0, 2, 2, 'MAT-030', 920, '2023-01-30', 15, 30, 38.722, -9.122, 1),
+(4, 'Rua D 1', 4, 3, 205, 3, 1, 1, 1, 1, 'MAT-031', 660000, '2023-01-31', 1, 31, 38.723, -9.123, 1),
+(5, 'Rua D 2', 5, 4, 310, 4, 1, 1, 2, 1, 'MAT-032', 860000, '2023-02-01', 2, 32, 38.724, -9.124, 1),
+(6, 'Rua D 3', 6, 0, 1200, 0, 0, 0, 2, 1, 'MAT-033', 160000, '2023-02-02', 3, 33, 41.170, -8.620, 1),
+(2, 'Rua D 4', 7, 2, 94, 1, 1, 0, 2, 1, 'MAT-034', 185000, '2023-02-03', 4, 34, 41.171, -8.621, 1),
+(3, 'Rua D 5', 8, 3, 134, 2, 1, 0, 2, 1, 'MAT-035', 285000, '2023-02-04', 5, 35, 41.172, -8.622, 1),
+(2, 'Rua D 6', 9, 2, 86, 1, 0, 0, 3, 1, 'MAT-036', 125000, '2023-02-05', 6, 36, 41.173, -8.623, 1),
+(1, 'Rua D 7', 10, 1, 62, 1, 1, 0, 1, 2, 'MAT-037', 720, '2023-02-06', 7, 37, 37.030, -7.920, 1),
+(2, 'Rua D 8', 11, 2, 98, 2, 1, 1, 1, 1, 'MAT-038', 310000, '2023-02-07', 8, 38, 37.031, -7.921, 1),
+(3, 'Rua D 9', 12, 3, 145, 2, 1, 1, 2, 1, 'MAT-039', 410000, '2023-02-08', 9, 39, 41.570, -8.420, 1),
+(4, 'Rua D 10', 13, 4, 260, 3, 1, 1, 1, 1, 'MAT-040', 920000, '2023-02-09', 10, 40, 40.220, -8.420, 1),
+(2, 'Rua E 1', 1, 2, 85, 1, 1, 0, 2, 1, 'MAT-041', 255000, '2023-02-10', 11, 1, 38.730, -9.130, 1),
+(3, 'Rua E 2', 2, 3, 125, 2, 1, 0, 1, 1, 'MAT-042', 455000, '2023-02-11', 12, 2, 38.731, -9.131, 1),
+(1, 'Rua E 3', 3, 1, 55, 1, 0, 0, 2, 2, 'MAT-043', 950, '2023-02-12', 13, 3, 38.732, -9.132, 1),
+(4, 'Rua E 4', 4, 3, 210, 3, 1, 1, 1, 1, 'MAT-044', 670000, '2023-02-13', 14, 4, 38.733, -9.133, 1),
+(5, 'Rua E 5', 5, 4, 320, 4, 1, 1, 2, 1, 'MAT-045', 870000, '2023-02-14', 15, 5, 38.734, -9.134, 1),
+(6, 'Rua E 6', 6, 0, 1100, 0, 0, 0, 2, 1, 'MAT-046', 155000, '2023-02-15', 1, 6, 41.180, -8.630, 1),
+(2, 'Rua E 7', 7, 2, 95, 1, 1, 0, 2, 1, 'MAT-047', 190000, '2023-02-16', 2, 7, 41.181, -8.631, 1),
+(3, 'Rua E 8', 8, 3, 135, 2, 1, 0, 2, 1, 'MAT-048', 290000, '2023-02-17', 3, 8, 41.182, -8.632, 1),
+(2, 'Rua E 9', 9, 2, 88, 1, 0, 0, 3, 1, 'MAT-049', 130000, '2023-02-18', 4, 9, 41.183, -8.633, 1),
+(1, 'Rua E 10', 10, 1, 64, 1, 1, 0, 1, 2, 'MAT-050', 740, '2023-02-19', 5, 10, 37.040, -7.930, 1),
+(2, 'Rua F 1', 11, 2, 97, 2, 1, 1, 1, 1, 'MAT-051', 305000, '2023-02-20', 6, 11, 37.041, -7.931, 1),
+(3, 'Rua F 2', 12, 3, 142, 2, 1, 1, 2, 1, 'MAT-052', 405000, '2023-02-21', 7, 12, 41.580, -8.430, 1),
+(4, 'Rua F 3', 13, 4, 255, 3, 1, 1, 1, 1, 'MAT-053', 910000, '2023-02-22', 8, 13, 40.230, -8.430, 1),
+(2, 'Rua F 4', 1, 2, 89, 1, 0, 0, 2, 2, 'MAT-054', 650, '2023-02-23', 9, 14, 38.740, -9.140, 1),
+(7, 'Rua F 5', 2, 0, 110, 1, 0, 0, 2, 2, 'MAT-055', 1300, '2023-02-24', 10, 15, 38.741, -9.141, 1),
+(2, 'Rua F 6', 3, 2, 96, 1, 1, 0, 4, 1, 'MAT-056', 330000, '2023-02-25', 11, 16, 38.742, -9.142, 1),
+(3, 'Rua F 7', 4, 3, 155, 2, 1, 1, 1, 1, 'MAT-057', 560000, '2023-02-26', 12, 17, 38.743, -9.143, 1),
+(1, 'Rua F 8', 5, 1, 58, 1, 0, 0, 2, 2, 'MAT-058', 880, '2023-02-27', 13, 18, 38.744, -9.144, 1),
+(5, 'Rua F 9', 6, 5, 410, 5, 1, 1, 1, 1, 'MAT-059', 1250000, '2023-02-28', 14, 19, 41.190, -8.640, 1),
+(2, 'Rua F 10', 7, 2, 102, 1, 1, 0, 2, 1, 'MAT-060', 215000, '2023-03-01', 15, 20, 41.191, -8.641, 1),
+(3, 'Rua G 1', 8, 3, 128, 2, 1, 0, 2, 1, 'MAT-061', 295000, '2023-03-02', 1, 21, 41.192, -8.642, 1),
+(4, 'Rua G 2', 9, 4, 215, 3, 1, 1, 1, 1, 'MAT-062', 490000, '2023-03-03', 2, 22, 41.193, -8.643, 1),
+(2, 'Rua G 3', 10, 2, 82, 1, 0, 0, 3, 1, 'MAT-063', 115000, '2023-03-04', 3, 23, 37.050, -7.940, 1),
+(1, 'Rua G 4', 11, 1, 68, 1, 1, 1, 1, 2, 'MAT-064', 980, '2023-03-05', 4, 24, 37.051, -7.941, 1),
+(2, 'Rua G 5', 12, 2, 108, 2, 1, 1, 1, 1, 'MAT-065', 360000, '2023-03-06', 5, 25, 41.590, -8.440, 1),
+(3, 'Rua G 6', 13, 3, 165, 3, 1, 1, 2, 1, 'MAT-066', 270000, '2023-03-07', 6, 26, 40.240, -8.440, 1),
+(6, 'Rua G 7', 1, 0, 2100, 0, 0, 0, 2, 1, 'MAT-067', 95000, '2023-03-08', 7, 27, 38.750, -9.150, 1),
+(2, 'Rua G 8', 2, 2, 84, 1, 1, 0, 2, 1, 'MAT-068', 265000, '2023-03-09', 8, 28, 38.751, -9.151, 1),
+(3, 'Rua G 9', 3, 3, 126, 2, 1, 0, 1, 1, 'MAT-069', 465000, '2023-03-10', 9, 29, 38.752, -9.152, 1),
+(1, 'Rua G 10', 4, 1, 54, 1, 0, 0, 2, 2, 'MAT-070', 930, '2023-03-11', 10, 30, 38.753, -9.153, 1),
+(4, 'Rua H 1', 5, 3, 208, 3, 1, 1, 1, 1, 'MAT-071', 665000, '2023-03-12', 11, 31, 38.754, -9.154, 1),
+(5, 'Rua H 2', 6, 4, 315, 4, 1, 1, 2, 1, 'MAT-072', 865000, '2023-03-13', 12, 32, 41.200, -8.650, 1),
+(6, 'Rua H 3', 7, 0, 1250, 0, 0, 0, 2, 1, 'MAT-073', 165000, '2023-03-14', 13, 33, 41.201, -8.651, 1),
+(2, 'Rua H 4', 8, 2, 96, 1, 1, 0, 2, 1, 'MAT-074', 188000, '2023-03-15', 14, 34, 41.202, -8.652, 1),
+(3, 'Rua H 5', 9, 3, 138, 2, 1, 0, 2, 1, 'MAT-075', 288000, '2023-03-16', 15, 35, 41.203, -8.653, 1),
+(2, 'Rua H 6', 10, 2, 89, 1, 0, 0, 3, 1, 'MAT-076', 128000, '2023-03-17', 1, 36, 37.060, -7.950, 1),
+(1, 'Rua H 7', 11, 1, 64, 1, 1, 0, 1, 2, 'MAT-077', 730, '2023-03-18', 2, 37, 37.061, -7.951, 1),
+(2, 'Rua H 8', 12, 2, 100, 2, 1, 1, 1, 1, 'MAT-078', 315000, '2023-03-19', 3, 38, 41.600, -8.450, 1),
+(3, 'Rua H 9', 13, 3, 148, 2, 1, 1, 2, 1, 'MAT-079', 415000, '2023-03-20', 4, 39, 40.250, -8.450, 1),
+(4, 'Rua H 10', 1, 4, 265, 3, 1, 1, 1, 1, 'MAT-080', 925000, '2023-03-21', 5, 40, 38.760, -9.160, 1),
+(2, 'Rua I 1', 2, 2, 87, 1, 1, 0, 2, 1, 'MAT-081', 258000, '2023-03-22', 6, 1, 38.761, -9.161, 1),
+(3, 'Rua I 2', 3, 3, 127, 2, 1, 0, 1, 1, 'MAT-082', 458000, '2023-03-23', 7, 2, 38.762, -9.162, 1),
+(1, 'Rua I 3', 4, 1, 57, 1, 0, 0, 2, 2, 'MAT-083', 970, '2023-03-24', 8, 3, 38.763, -9.163, 1),
+(4, 'Rua I 4', 5, 3, 215, 3, 1, 1, 1, 1, 'MAT-084', 675000, '2023-03-25', 9, 4, 38.764, -9.164, 1),
+(5, 'Rua I 5', 6, 4, 325, 4, 1, 1, 2, 1, 'MAT-085', 875000, '2023-03-26', 10, 5, 41.210, -8.660, 1),
+(6, 'Rua I 6', 7, 0, 1150, 0, 0, 0, 2, 1, 'MAT-086', 158000, '2023-03-27', 11, 6, 41.211, -8.661, 1),
+(2, 'Rua I 7', 8, 2, 98, 1, 1, 0, 2, 1, 'MAT-087', 195000, '2023-03-28', 12, 7, 41.212, -8.662, 1),
+(3, 'Rua I 8', 9, 3, 137, 2, 1, 0, 2, 1, 'MAT-088', 295000, '2023-03-29', 13, 8, 41.213, -8.663, 1),
+(2, 'Rua I 9', 10, 2, 90, 1, 0, 0, 3, 1, 'MAT-089', 135000, '2023-03-30', 14, 9, 37.070, -7.960, 1),
+(1, 'Rua I 10', 11, 1, 66, 1, 1, 0, 1, 2, 'MAT-090', 750, '2023-03-31', 15, 10, 37.071, -7.961, 1),
+(2, 'Rua J 1', 12, 2, 99, 2, 1, 1, 1, 1, 'MAT-091', 308000, '2023-04-01', 1, 11, 41.610, -8.460, 1),
+(3, 'Rua J 2', 13, 3, 144, 2, 1, 1, 2, 1, 'MAT-092', 408000, '2023-04-02', 2, 12, 40.260, -8.460, 1),
+(4, 'Rua J 3', 1, 4, 258, 3, 1, 1, 1, 1, 'MAT-093', 915000, '2023-04-03', 3, 13, 38.770, -9.170, 1),
+(2, 'Rua J 4', 2, 2, 91, 1, 0, 0, 2, 2, 'MAT-094', 660, '2023-04-04', 4, 14, 38.771, -9.171, 1),
+(7, 'Rua J 5', 3, 0, 115, 1, 0, 0, 2, 2, 'MAT-095', 1350, '2023-04-05', 5, 15, 38.772, -9.172, 1),
+(2, 'Rua J 6', 4, 2, 98, 1, 1, 0, 4, 1, 'MAT-096', 335000, '2023-04-06', 6, 16, 38.773, -9.173, 1),
+(3, 'Rua J 7', 5, 3, 158, 2, 1, 1, 1, 1, 'MAT-097', 565000, '2023-04-07', 7, 17, 38.774, -9.174, 1),
+(1, 'Rua J 8', 6, 1, 59, 1, 0, 0, 2, 2, 'MAT-098', 890, '2023-04-08', 8, 18, 41.220, -8.670, 1),
+(5, 'Rua J 9', 7, 5, 415, 5, 1, 1, 1, 1, 'MAT-099', 1280000, '2023-04-09', 9, 19, 41.221, -8.671, 1),
+(2, 'Rua J 10', 8, 2, 104, 1, 1, 0, 2, 1, 'MAT-100', 218000, '2023-04-10', 10, 20, 41.222, -8.672, 1);
+
+
+-- =============================================================
+-- 4. PROPOSTAS E TRANSAÇÕES (MANUAIS)
 -- =============================================================
 
-INSERT INTO Transacao 
-(id_imovel, id_ativo, id_passivo, id_agente, id_tipotransacao, valorcomissao, duracao, valor, datatransacao, datacontrato, id_proposta) 
-VALUES 
--- 1. Venda T3 Barcelos (Veio da Proposta 2)
--- Valor: 180k, Agente Rui (5%) = 9.000€
-(1, 5, 1, 1, 1, 9000.00, 0, 180000.00, '2024-12-01', '2024-12-01', 2),
+-- 4.1 Propostas (Algumas aceites, outras pendentes)
+INSERT INTO Proposta (valorproposta, dataproposta, id_cliente, id_imovel, id_agente, id_estadoproposta, observacoes) VALUES
+(245000, '2023-05-01', 20, 1, 1, 2, 'Aceite pelo proprietario'),
+(440000, '2023-05-02', 21, 2, 2, 2, 'Proposta fechada'),
+(900, '2023-05-03', 22, 3, 3, 2, 'Arrendamento OK'),
+(640000, '2023-05-04', 23, 4, 4, 1, 'A aguardar resposta'),
+(840000, '2023-05-05', 24, 5, 5, 3, 'Valor muito baixo'),
+(180000, '2023-05-06', 25, 7, 7, 2, 'Aceite'),
+(270000, '2023-05-07', 26, 8, 8, 2, 'Aceite'),
+(300000, '2023-05-08', 27, 11, 11, 2, 'Aceite Algarve'),
+(400000, '2023-05-09', 28, 12, 12, 2, 'Aceite Algarve'),
+(320000, '2023-05-10', 29, 16, 1, 2, 'Aceite Lisboa'),
+(900, '2023-05-11', 30, 24, 9, 2, 'Arrendamento T1'),
+(1200000, '2023-05-12', 31, 19, 4, 1, 'Negociação em curso'),
+(250000, '2023-05-13', 32, 41, 11, 2, 'Aceite'),
+(450000, '2023-05-14', 33, 42, 12, 2, 'Aceite'),
+(950, '2023-05-15', 34, 43, 13, 2, 'Arrendamento'),
+(300000, '2023-05-16', 35, 51, 6, 2, 'Aceite'),
+(550000, '2023-05-17', 36, 57, 12, 2, 'Aceite'),
+(1200000, '2023-05-18', 37, 99, 9, 2, 'Moradia Luxo Aceite'),
+(210000, '2023-05-19', 38, 100, 10, 2, 'Apartamento Norte Aceite'),
+(600, '2023-05-20', 39, 14, 14, 2, 'Arrendamento Coimbra');
 
--- 2. Arrendamento Loja Guimarães (Veio da Proposta 4)
--- Valor: 800€, Agente Pedro (4%) = 32€ (sobre 1 renda)
-(3, 8, 3, 3, 2, 32.00, 60, 800.00, '2025-01-01', '2025-01-01', 4),
-
--- 3. Venda T2 Porto (Veio da Proposta 7)
--- Valor: 315k, Agente Sofia (5%) = 15.750€
-(5, 7, 4, 2, 1, 15750.00, 0, 315000.00, '2024-11-01', '2024-11-01', 7),
-
--- 4. Arrendamento T1 Braga (Veio da Proposta 6)
--- Valor: 600€, Agente Pedro (4%) = 24€
-(7, 6, 3, 3, 2, 24.00, 12, 600.00, '2025-01-20', '2025-01-20', 6);
+-- 4.2 Transações (Baseadas nas propostas aceites acima)
+-- Estrutura: id_imovel, id_ativo(comprador), id_passivo(vendedor), id_agente, id_tipo, valor, data_inicio, data_fim, datatransacao, datacontrato, id_proposta
+INSERT INTO Transacao (id_imovel, id_ativo, id_passivo, id_agente, id_tipotransacao, valor, data_inicio, data_fim, datatransacao, datacontrato, id_proposta) VALUES
+(1, 20, 1, 1, 1, 245000, '2023-06-01', NULL, '2023-06-15', '2023-06-01', 1),
+(2, 21, 2, 2, 1, 440000, '2023-06-02', NULL, '2023-06-16', '2023-06-02', 2),
+(3, 22, 3, 3, 2, 900, '2023-06-01', '2024-06-01', '2023-06-03', '2023-06-03', 3),
+(7, 25, 7, 7, 1, 180000, '2023-06-06', NULL, '2023-06-20', '2023-06-06', 6),
+(8, 26, 8, 8, 1, 270000, '2023-06-07', NULL, '2023-06-21', '2023-06-07', 7),
+(11, 27, 11, 11, 1, 300000, '2023-06-08', NULL, '2023-06-22', '2023-06-08', 8),
+(12, 28, 12, 12, 1, 400000, '2023-06-09', NULL, '2023-06-23', '2023-06-09', 9),
+(16, 29, 16, 1, 1, 320000, '2023-06-10', NULL, '2023-06-24', '2023-06-10', 10),
+(24, 30, 24, 9, 2, 900, '2023-06-11', '2024-06-11', '2023-06-11', '2023-06-11', 11),
+(41, 32, 1, 11, 1, 250000, '2023-06-13', NULL, '2023-06-27', '2023-06-13', 13),
+(42, 33, 2, 12, 1, 450000, '2023-06-14', NULL, '2023-06-28', '2023-06-14', 14),
+(43, 34, 3, 13, 2, 950, '2023-06-15', '2024-06-15', '2023-06-15', '2023-06-15', 15),
+(51, 35, 11, 6, 1, 300000, '2023-06-16', NULL, '2023-06-30', '2023-06-16', 16),
+(57, 36, 17, 12, 1, 550000, '2023-06-17', NULL, '2023-07-01', '2023-06-17', 17),
+(99, 37, 19, 9, 1, 1200000, '2023-06-18', NULL, '2023-07-02', '2023-06-18', 18),
+(100, 38, 20, 10, 1, 210000, '2023-06-19', NULL, '2023-07-03', '2023-06-19', 19),
+(14, 39, 14, 14, 2, 600, '2023-06-20', '2024-06-20', '2023-06-20', '2023-06-20', 20);
 
 -- =============================================================
--- 6. PAGAMENTOS E DOCUMENTOS
+-- 5. PREFERÊNCIAS DOS CLIENTES
 -- =============================================================
-
-INSERT INTO PagamentoComissao (datapagamentocomissao, valor, id_metodopagamento, id_transacao) VALUES 
-('2024-12-02', 9000.00, 1, 1),   -- Comissão Rui
-('2025-01-02', 32.00, 1, 2),     -- Comissão Pedro (Loja)
-('2024-11-05', 15750.00, 2, 3),  -- Comissão Sofia
-('2025-01-21', 24.00, 3, 4);     -- Comissão Pedro (T1)
-
-INSERT INTO Documentos (id_transacao, id_documento, datarececao, validade) VALUES 
-(1, 1, '2024-12-01', '2034-12-01'), -- Escritura Barcelos
-(2, 3, '2025-01-01', '2030-01-01'), -- Contrato Loja
-(3, 1, '2024-11-01', '2034-11-01'), -- Escritura Porto
-(4, 3, '2025-01-20', '2026-01-20'); -- Contrato T1 Braga
-
--- =============================================================
--- 7. PREFERÊNCIAS (Para queries de prospeção)
--- =============================================================
-
-INSERT INTO Preferencias (id_cliente, id_agente, nquartos, nwc, area, garagem, piscina, id_modalidade, valor, id_concelho) VALUES
-(5, 1, 3, 2, 150, 1, 0, 1, 250000.00, 1), -- Carlos ainda procura outra casa em Barcelos
-(6, 3, 2, 1, 80, 0, 0, 2, 700.00, 2),     -- Beatriz procura T2 em Braga para arrendar
-(7, 2, 0, 0, 1000, 0, 0, 1, 500000.00, 6); -- Empresa Invest quer terrenos no Porto
+INSERT INTO Preferencias (id_cliente, id_agente, id_modalidade, valor_minimo, valor_maximo, id_concelho) VALUES
+(1, 1, 1, 200000, 300000, 1),
+(2, 2, 1, 150000, 250000, 2),
+(3, 3, 2, 800, 1200, 1),
+(4, 4, 1, 300000, 500000, 3),
+(5, 5, 1, 400000, 600000, 1),
+(6, 6, 2, 500, 800, 6),
+(7, 7, 1, 100000, 200000, 7),
+(8, 8, 1, 200000, 350000, 11),
+(9, 9, 2, 600, 1000, 10),
+(10, 10, 1, 150000, 250000, 13);
