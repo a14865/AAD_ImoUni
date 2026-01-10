@@ -101,8 +101,8 @@ CREATE TABLE MetodoPagamento(
 CREATE TABLE Transacao(
 	id_transacao INT IDENTITY(1,1) PRIMARY KEY,
 	id_imovel INT NOT NULL,
-	id_ativo INT NOT NULL,
-	id_passivo INT NOT NULL,
+	id_comprador_arrendatario INT NOT NULL,
+	id_vendedor_arrendador INT NOT NULL,
 	id_agente INT NOT NULL,
 	id_tipotransacao INT NOT NULL,
 	valor DECIMAL (10,2) NOT NULL,
@@ -110,11 +110,11 @@ CREATE TABLE Transacao(
 	data_fim DATE,
 	datatransacao DATE NOT NULL,
 	datacontrato DATE NOT NULL,
-	CHECK (id_passivo <> id_ativo),
+	CHECK (id_comprador_arrendatario <> id_vendedor_arrendador),
 	CHECK (data_fim IS NULL OR data_fim > data_inicio),
 	FOREIGN KEY (id_imovel) REFERENCES CatalogoImovel(id_imovel),
-	FOREIGN KEY (id_ativo) REFERENCES Cliente(id_cliente),
-	FOREIGN KEY (id_passivo) REFERENCES Cliente(id_cliente),
+	FOREIGN KEY (id_comprador_arrendatario) REFERENCES Cliente(id_cliente),
+	FOREIGN KEY (id_vendedor_arrendador) REFERENCES Cliente(id_cliente),
 	FOREIGN KEY (id_agente) REFERENCES Agente(id_agente),
 	FOREIGN KEY (id_tipotransacao) REFERENCES TipoTransacao(id_tipotransacao)
 );
